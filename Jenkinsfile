@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Source Code') {
             steps {
                 checkout scm
             }
@@ -14,17 +15,31 @@ pipeline {
             }
         }
 
-        stage('Run React App') {
+        stage('Run React Application') {
             steps {
-                bat 'start /B npm start'
-                bat 'timeout /t 20'
+                bat 'start "" cmd /c "npm start"'
+                powershell 'Start-Sleep -Seconds 20'
             }
         }
 
         stage('Run Selenium Test') {
             steps {
-                bat 'node src\\tests\\test.js'
+                bat 'node tests\\test.js'
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline Completed'
+        }
+
+        success {
+            echo 'Build Successful'
+        }
+
+        failure {
+            echo 'Build Failed'
         }
     }
 }
